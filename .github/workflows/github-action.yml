@@ -42,9 +42,9 @@ jobs:
             password: ${{ secrets.DOCKER_SECRET }}
 
         - name: Build Docker image
-          run: docker build -t geonhyukseo/goormfront:${{ github.sha }} .
+          run: docker build -t geonhyukseo/goormback:${{ github.sha }} .
 
         - name: Push Docker image
-          run: docker push geonhyukseo/goormfront:${{ github.sha }}
+          run: docker push geonhyukseo/goormback:${{ github.sha }}
 
             
