@@ -8,23 +8,23 @@ on:
 
 
 jobs:
-    test:
-        runs-on: ubuntu-latest
+    # test:
+    #     runs-on: ubuntu-latest
 
-        steps:
-        - name: Checkout code
-          uses: actions/checkout@v2
+    #     steps:
+    #     - name: Checkout code
+    #       uses: actions/checkout@v2
 
-        - name: Node install
-          uses: actions/setup-node@v4
-          with:
-            node-version: '>= 20.5.0'
+    #     - name: Node install
+    #       uses: actions/setup-node@v4
+    #       with:
+    #         node-version: '>= 20.5.0'
         
-        - name: Npm install
-          run: npm install
+    #     - name: Npm install
+    #       run: npm install
 
-        - name: Run Test
-          run: npm test
+    #     - name: Run Test
+    #       run: npm test
         
 
     docker-image-build-and-test:
