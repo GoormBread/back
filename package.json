@@ -25,6 +25,8 @@
     "@nestjs/platform-express": "^10.0.0",
     "@prisma/adapter-pg": "^5.14.0",
     "@prisma/client": "^5.13.0",
+    "@types/bcrypt": "^5.0.2",
+    "bcrypt": "^5.1.1",
     "connect-redis": "^7.1.1",
     "express-session": "^1.18.0",
     "ioredis": "^5.4.1",
