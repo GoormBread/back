@@ -1,0 +1,29 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Game {
+  game_id String @id @default(uuid())
+  player_num Int
+  game_name String
+  game_info String
+  game_command Json
+}
+
+model User {
+  user_id String @id
+  password String
+  nickname String
+  user_game_command Json
+}
