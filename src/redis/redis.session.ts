@@ -8,17 +8,17 @@ export function setUpSession(app: INestApplication): void {
     const RedisStore = connectRedis(session);
     app.use(
         session({
-          secret: 'dskjalskg',  // 세션에 사용될 시크릿 값. 감춰두자.
+          secret: process.env.SESSION_SECRET_KEY,  
           saveUninitialized: false,
           resave: false,
-          store: new RedisStore({  // 세션 스토어 설정. 여기서 RedisStore를 설정해서 client에 위에서 설정한 레디스를 입력하자.
+          store: new RedisStore({  
             client: redisClient,
-            ttl: 30,  // time to live
+            ttl: 30,  
           }),
           cookie: {
             httpOnly: true,
-            secure: true,
-            maxAge: 30000,  //세션이 redis에 저장되는 기간은 maxAge로 조절한다.(ms)
+            secure: false,
+            maxAge: 3600000, 
           },
         }),
       );
