@@ -1,18 +1,18 @@
-import { Module } from '@nestjs/common';
-
+import { Global, Inject, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AuthModule } from './auth/auth.module';
-import { RedisModule } from '@nestjs-modules/ioredis';
 import { PrismaClient } from '@prisma/client';
+import { RedisModule } from './redis/redis.module';
 
+@Global()
 @Module({
   imports: [
-    RedisModule.forRoot({
-      type: 'single',
-      url: process.env.REDIS_URL,
-    }),
-    AuthModule],
+    AuthModule,
+    RedisModule,
+  ],
   controllers: [],
   providers: [PrismaClient],
   exports: [PrismaClient],
 })
-export class AppModule {}
+export class AppModule{
+  
+}
