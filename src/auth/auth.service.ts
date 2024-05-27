@@ -1,4 +1,4 @@
-import {  Injectable, InternalServerErrorException, NotFoundException, Req, Session, UnauthorizedException } from '@nestjs/common';
+import {  Injectable, InternalServerErrorException, NotFoundException, Req, Res, Session, UnauthorizedException } from '@nestjs/common';
 import { LoginDto } from './dto/in/Login.dto';
 import { SaveUserDto } from './dto/in/SaveUser.dto';
 
@@ -6,7 +6,7 @@ import { PrismaClient } from '@prisma/client';
 import { compare, hash } from 'bcrypt';
 
 import { SALT } from 'src/config';
-import { Request } from 'express';
+import { Request, Response, response } from 'express';
 
 declare module "express-session" {
   interface SessionData {
@@ -17,15 +17,15 @@ declare module "express-session" {
 @Injectable()
 export class AuthService {
   constructor( private readonly prisma: PrismaClient){}
-  async logout(request: Request) {
+  async logout(request: Request, response: Response) {
     request.session.destroy((err)=>{
       if(err)
         throw new InternalServerErrorException();
-    })
-    return {
+    });
+    return response.clearCookie('connect.sid').json({
       MESSAGE: 'logout success',
       STATUS_CODE: 200,
-    }
+    })
   }
 
 
