@@ -61,11 +61,12 @@ jobs:
 
         - name: Package Web Helm chart
           run: |
-            ls -la
+            cd web-helm
             helm package web-helm/
             helm repo index .
         - name: Commit and Push changes
           run: |
+            cd web-helm
             git config --global user.email "sgh4123@naver.com"
             git config --global user.name "SeoGeonhyuk"
             git add .
