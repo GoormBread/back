@@ -61,7 +61,8 @@ jobs:
 
         - name: Package Web Helm chart
           run: |
-            helm package ./web-helm/
+            ls -la
+            helm package web-helm/
             helm repo index .
         - name: Commit and Push changes
           run: |
