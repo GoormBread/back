@@ -28,6 +28,11 @@ export class LobbyController {
           }
     }
 
+    // @Post('/:lobby_id/enter')
+    // async enterLobby(@Body()){
+
+    // }
+
     @Delete('/:lobby_id')
     async deleteLobby(@Param('lobby_id') lobby_id: string){
         try{
