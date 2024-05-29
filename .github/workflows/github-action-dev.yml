@@ -65,13 +65,15 @@ jobs:
             helm package web-helm/
             helm repo index .
         - name: Commit and Push changes
+          env:
+            GITHUB_TOKEN: ${{ secrets.TOKEN }}
           run: |
             cd web-helm
             git config --global user.email "sgh4123@naver.com"
             git config --global user.name "SeoGeonhyuk"
             git add .
             git commit -m "Update image tag to ${{ github.sha }} and package Helm chart"
-            git push origin main
+            git push https://x-access-token:${GITHUB_TOKEN}@github.com/GoormBread/web-helm.git main
       
 
             
