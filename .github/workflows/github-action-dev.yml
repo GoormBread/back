@@ -51,8 +51,8 @@ jobs:
         
         - name: Update values.yaml
           run: |
-            ls -la
-            yq eval '.backend.image.tag = "${{ github.sha }}" -i web-helm/values.yaml'
+            cd web-helm
+            yq eval '.backend.image.tag = "${{ github.sha }}" -i ./web-helm/values.yaml'
         
         - name: Setup Helm
           uses: azure/setup-helm@v1
@@ -61,11 +61,10 @@ jobs:
 
         - name: Package Web Helm chart
           run: |
-            helm package web-helm/
+            helm package ./web-helm/
             helm repo index .
         - name: Commit and Push changes
           run: |
-            cd web-helm
             git config --global user.email "sgh4123@naver.com"
             git config --global user.name "SeoGeonhyuk"
             git add .
