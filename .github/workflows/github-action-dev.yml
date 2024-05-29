@@ -58,7 +58,7 @@ jobs:
           with:
             version: 'v3.5.4'
 
-        - name: Package Helm chart
+        - name: Package Web Helm chart
           run: |
             helm package web-helm/web-helm
             helm repo index web-helm/.
