@@ -51,6 +51,7 @@ jobs:
         
         - name: Update values.yaml
           run: |
+            ls -la
             yq eval '.backend.image.tag = "${{ github.sha }}" -i web-helm/values.yaml'
         
         - name: Setup Helm
