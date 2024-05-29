@@ -9,6 +9,6 @@ import { RedisModule } from 'nestjs-redis';
 @Module({
   imports: [RedisModule],
   controllers: [AuthController],
-  providers: [AuthService, PrismaClient],
+  providers: [AuthService],
 })
 export class AuthModule {}
