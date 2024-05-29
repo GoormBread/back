@@ -7,7 +7,7 @@ COPY package.json ./
 COPY package-lock.json ./
 
 RUN npm install
-
+RUN npx prisma generate
 COPY . .
 
-EXPOSE 8080
+EXPOSE 3000
