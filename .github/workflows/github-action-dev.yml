@@ -1,0 +1,75 @@
+name: Update docker image and helm chart
+
+on:
+    pull_request:
+        branches:
+            - develop
+        types: [closed]
+
+
+
+jobs:
+        
+    docker-image-build-and-test:
+        runs-on: ubuntu-latest
+
+        steps:
+        - name: Checkout code
+          uses: actions/checkout@v2
+        
+        - name: Login to Docker
+          uses: docker/login-action@v2
+          with:
+            username: ${{ secrets.DOCKER_USERNAME }}
+            password: ${{ secrets.DOCKER_SECRET }}
+
+        - name: Build Docker image
+          run: docker build -t geonhyukseo/goormback:${{ github.sha }} .
+
+        - name: Push Docker image
+          run: docker push geonhyukseo/goormback:${{ github.sha }}
+
+    web-helm-update:
+      runs-on: ubuntu-latest
+      needs: docker-image-build-and-test
+
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v2
+
+        - name: Checkout Helm chart repository
+          uses: actions/checkout@v2
+          with:
+            repository: GoormBread/web-helm
+            token: ${{ secrets.TOKEN }}
+            path: web-helm
+        
+        - name: Install yq
+          run: |
+            sudo apt-get update -y
+            sudo apt-get install -y jq
+        
+        - name: Update values.yaml
+          run: |
+            yq eval '.backend.image.tag = "${{ github.sha }}" -i web-helm/web-helm/values.yaml'
+        
+        - name: Setup Helm
+          uses: azure/setup-helm@v1
+          with:
+            version: 'v3.5.4'
+
+        - name: Package Helm chart
+          run: |
+            helm package web-helm/web-helm
+            helm repo index web-helm/.
+        - name: Commit and Push changes
+          run: |
+            cd web-helm
+            git config --global user.email "sgh4123@naver.com"
+            git config --global user.name "SeoGeonhyuk"
+            git add .
+            git commit -m "Update image tag to ${{ github.sha }} and package Helm chart"
+            git push origin main
+      
+
+            
