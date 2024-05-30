@@ -1,5 +1,5 @@
 FROM node:21
-CMD ["npm", "run", "start:dev"]
+
 
 WORKDIR /app
 
@@ -10,8 +10,6 @@ RUN npm install
 
 COPY . .
 
-RUN npx prisma db pull
-RUN npx prisma generate
-
+CMD ["sh", "-c", "npx prisma db pull && npx prisma migrate && npx prisma generate && npm run start:dev"]
 
 EXPOSE 3000
