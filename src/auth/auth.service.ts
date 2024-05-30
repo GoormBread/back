@@ -1,4 +1,4 @@
-import {  Injectable, InternalServerErrorException, NotFoundException, Req, Res, Session, UnauthorizedException } from '@nestjs/common';
+import {  ForbiddenException, Injectable, InternalServerErrorException, NotFoundException, Req, Res, Session, UnauthorizedException } from '@nestjs/common';
 import { LoginDto } from './dto/in/Login.dto';
 import { SaveUserDto } from './dto/in/SaveUser.dto';
 
@@ -8,6 +8,7 @@ import { compare, hash } from 'bcrypt';
 import { SALT } from 'src/config';
 import { Request, Response, response } from 'express';
 import { DEFAULT_GAME_COMMAND } from './constants/DEFAULTGAMECOMMAND';
+import { STATUS_CODES } from 'http';
 
 declare module "express-session" {
   interface SessionData {
@@ -25,7 +26,7 @@ export class AuthService {
     });
     return response.clearCookie('connect.sid').json({
       MESSAGE: 'logout success',
-      STATUS_CODE: 200,
+      STATUS_CODES: 200,
     })
   }
 
@@ -43,7 +44,7 @@ export class AuthService {
         request.session.userId = loginDto.userId;
         return {
           MESSAGE: 'login success',
-          STATUS_CODE: 200,
+          STATUS_CODES: 200,
           userId: user.user_id,
           nickname: user.nickname
         }
@@ -59,18 +60,31 @@ export class AuthService {
 
 
   async saveUser(saveUserDto: SaveUserDto) {
-    const hashedPassword = await hash(saveUserDto.password, SALT);
-    const user = await this.prisma.user.create({
-      data:{
-        user_id: saveUserDto.userId,
-        password: hashedPassword,
-        nickname: saveUserDto.nickname,
-        user_game_command: DEFAULT_GAME_COMMAND,
+    const user = await this.prisma.user.findUnique(
+      {
+        where:{
+          user_id: saveUserDto.userId,
+        }
       }
-    });
-    return {
-      MESSAGE: 'user register success',
-      STATUS_CODE: 201,
+    )
+    if(user !== null){
+      throw new ForbiddenException();
+    }
+    else{
+      const hashedPassword = await hash(saveUserDto.password, SALT);
+      const user = await this.prisma.user.create({
+        data:{
+          user_id: saveUserDto.userId,
+          password: hashedPassword,
+          nickname: saveUserDto.nickname,
+          user_game_command: DEFAULT_GAME_COMMAND,
+        }
+      });
+      return {
+        MESSAGE: 'user register success',
+        STATUS_CODES: 201,
+      }
     }
   }
+    
 }

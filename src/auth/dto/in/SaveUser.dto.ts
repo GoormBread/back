@@ -10,6 +10,8 @@ import {
 export class SaveUserDto {
   @IsString()
   @IsNotEmpty({ message: 'User ID is required' })
+  @MinLength(4, { message: 'Id must be at least 8 characters long' })
+  @MaxLength(14, { message: 'Id must be less than 20 characters long' })
   userId: string;
 
   @IsString()
