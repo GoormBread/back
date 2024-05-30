@@ -45,6 +45,7 @@ export class AuthService {
           MESSAGE: 'login success',
           STATUS_CODE: 200,
           userId: user.user_id,
+          nickname: user.nickname
         }
       }
       else{
