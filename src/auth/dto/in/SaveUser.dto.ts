@@ -25,7 +25,4 @@ export class SaveUserDto {
   @IsString()
   @IsNotEmpty({ message: 'Nickname is required' })
   nickname: string;
-
-  @IsJSON({ message: 'User game command must be a valid JSON' })
-  userGameCommand?: JSON;
 }
