@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Socket.IO Room Example</title>
+  <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+</head>
+<body>
+  <h1>Socket.IO Room Example</h1>
+  <input type="text" id="room" placeholder="Enter room name">
+  <button id="joinRoom">Join Room</button>
+  <button id="leaveRoom">Leave Room</button>
+  <input type="text" id="message" placeholder="Enter message">
+  <button id="sendMessage">Send Message</button>
+  <div id="messages"></div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const socket = io('http://localhost:3000', {
+        transports: ['websocket']
+      });
+
+      const roomInput = document.getElementById('room');
+      const messageInput = document.getElementById('message');
+      const messagesDiv = document.getElementById('messages');
+
+      document.getElementById('joinRoom').addEventListener('click', () => {
+        const room = roomInput.value;
+        console.log('Joining room:', room);
+        socket.emit('joinRoom', room);
+      });
+
+      document.getElementById('leaveRoom').addEventListener('click', () => {
+        const room = roomInput.value;
+        console.log('Leaving room:', room);
+        socket.emit('leaveRoom', room);
+      });
+
+      document.getElementById('sendMessage').addEventListener('click', () => {
+        const room = roomInput.value;
+        const message = messageInput.value;
+        console.log('Sending message to room:', room, 'message:', message);
+        socket.emit('message', { room, message });
+      });
+
+      socket.on('message', (message) => {
+        const msgElem = document.createElement('p');
+        msgElem.textContent = message;
+        messagesDiv.appendChild(msgElem);
+      });
+
+      socket.on('roomInfo', (roomInfo) => {
+        console.log('Room Info:', roomInfo);
+      });
+    });
+  </script>
+</body>
+</html>

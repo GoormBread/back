@@ -1,10 +1,22 @@
-import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { Global, Inject, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 
+import { PrismaClient } from '@prisma/client';
+import { RedisModule } from './redis/redis.module';
+import { LobbyModule } from './lobby/lobby.module';
+
+import { AuthModule } from './auth/auth.module';
+
+@Global()
 @Module({
-  imports: [],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [
+    AuthModule,
+    RedisModule,
+    LobbyModule,
+  ],
+  controllers: [],
+  providers: [PrismaClient,],
+  exports: [PrismaClient],
 })
-export class AppModule {}
+export class AppModule{
+  
+}
