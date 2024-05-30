@@ -7,7 +7,7 @@ import { compare, hash } from 'bcrypt';
 
 import { SALT } from 'src/config';
 import { Request, Response, response } from 'express';
-import { DEFAULT_GAME_COMMAND } from './constants/defaultGameCommand';
+import { DEFAULT_GAME_COMMAND } from './constants/DEFAULTGAMECOMMAND';
 import { STATUS_CODES } from 'http';
 
 declare module "express-session" {
