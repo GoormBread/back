@@ -7,6 +7,7 @@ import { compare, hash } from 'bcrypt';
 
 import { SALT } from 'src/config';
 import { Request, Response, response } from 'express';
+import { DEFAULT_GAME_COMMAND } from './constants/defaultGameCommand';
 
 declare module "express-session" {
   interface SessionData {
@@ -43,6 +44,8 @@ export class AuthService {
         return {
           MESSAGE: 'login success',
           STATUS_CODE: 200,
+          userId: user.user_id,
+          nickname: user.nickname
         }
       }
       else{
@@ -62,13 +65,12 @@ export class AuthService {
         user_id: saveUserDto.userId,
         password: hashedPassword,
         nickname: saveUserDto.nickname,
-        user_game_command: JSON.stringify(saveUserDto.userGameCommand),
+        user_game_command: DEFAULT_GAME_COMMAND,
       }
     });
     return {
       MESSAGE: 'user register success',
       STATUS_CODE: 201,
-      user,
     }
   }
 }
