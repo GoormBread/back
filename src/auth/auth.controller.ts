@@ -1,4 +1,4 @@
-import { Body, Controller, NotFoundException, Post, Req, Res, Session} from '@nestjs/common';
+import { Body, Controller, HttpCode, NotFoundException, Post, Req, Res, Session} from '@nestjs/common';
 import { SaveUserDto } from './dto/in/SaveUser.dto';
 import { LoginDto } from './dto/in/Login.dto';
 import { AuthService } from './auth.service';
@@ -12,6 +12,7 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   //Pipe 사용
+  @HttpCode(201)
   @Post('/register')
   async registerUser(@Body() saveUserDto: SaveUserDto) {
     try{
