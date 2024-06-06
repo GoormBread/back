@@ -7,7 +7,6 @@ import { setUpSession } from './redis/redis.session';
 import { LOBBY_REDIS } from './redis/redis.constants';
 import { RedisIoAdapter } from './redis/redis.adapter';
 
-
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const redis: Redis = app.get(LOBBY_REDIS);

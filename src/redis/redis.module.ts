@@ -14,7 +14,7 @@ import { LOBBY_REDIS } from './redis.constants';
     // },
     {
       provide: LOBBY_REDIS,
-    //   useValue: new Redis(process.env.REDIS_LOBBY_URL),
+      //   useValue: new Redis(process.env.REDIS_LOBBY_URL),
       useFactory: () => {
         return new Redis(process.env.REDIS_LOBBY_URL);
       },

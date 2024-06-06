@@ -1,3 +1,1 @@
-export type PatchLobbyDto = {
-    
-}
+export type PatchLobbyDto = {};

@@ -5,24 +5,25 @@ import { Redis } from 'ioredis';
 import { LOBBY_REDIS } from './redis.constants';
 import { Inject } from '@nestjs/common';
 
-
 export class RedisIoAdapter extends IoAdapter {
-    private adapterConstructor: ReturnType<typeof createAdapter>;
-    constructor(app: any, @Inject(LOBBY_REDIS)private readonly redis: Redis){
-        super(app);
-    }
+  private adapterConstructor: ReturnType<typeof createAdapter>;
+  constructor(
+    app: any,
+    @Inject(LOBBY_REDIS) private readonly redis: Redis,
+  ) {
+    super(app);
+  }
 
-    async connectToRedis(): Promise<void> {
-        const pubClient = this.redis;
-        const subClient = pubClient.duplicate();
+  async connectToRedis(): Promise<void> {
+    const pubClient = this.redis;
+    const subClient = pubClient.duplicate();
 
+    this.adapterConstructor = createAdapter(pubClient, subClient);
+  }
 
-        this.adapterConstructor = createAdapter(pubClient, subClient);
-    }
-
-    createIOServer(port: number, options?: ServerOptions): any {
-        const server = super.createIOServer(port, options);
-        server.adapter(this.adapterConstructor);
-        return server;
-    }
+  createIOServer(port: number, options?: ServerOptions): any {
+    const server = super.createIOServer(port, options);
+    server.adapter(this.adapterConstructor);
+    return server;
+  }
 }
