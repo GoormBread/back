@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, Param, Post, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, Post, UsePipes, ValidationPipe } from '@nestjs/common';
 import { GameService } from './game.service';
 import { throwErrorHttp } from 'src/error';
 import { PostGameDto } from './dto/in/PostGame.dto';
@@ -40,6 +40,15 @@ export class GameController {
   async postGameInformation(@Body() postGameDto: PostGameDto) {
     try{
         return await this.gameService.postGameInfo(postGameDto);
+    } catch (error) {
+        throwErrorHttp(error);
+    }
+  }
+
+  @Delete('/:gameId')
+  async deleteGameInformation(@Param('gameId') gameId: string){
+    try{
+        return await this.gameService.removeGameInfo(gameId);
     } catch (error) {
         throwErrorHttp(error);
     }

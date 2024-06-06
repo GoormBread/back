@@ -1,10 +1,30 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
 import { PostGameDto } from './dto/in/PostGame.dto';
+import { STATUS_CODES } from 'http';
+
 
 @Injectable()
 export class GameService {
-    constructor(private readonly prisma: PrismaClient) { }
+    constructor(private readonly prisma: PrismaClient) {}
+    async removeGameInfo(gameId: string) {
+        const gameInfo = await this.prisma.game.delete({
+            where: {
+                game_id: gameId
+            },
+        });
+        if(gameInfo !== null){
+            return {
+                MESSAGE: 'Delete GameInfo Success!',
+                STATUS_CODES: 200,
+                gameInfo,
+            };
+        }
+        else{
+            throw new NotFoundException();
+        }
+    }
+    
     async postGameInfo(postGameDto: PostGameDto) {
         const gameInfo = await this.prisma.game.create({
             data: {
