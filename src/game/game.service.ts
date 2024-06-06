@@ -1,54 +1,70 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { MESSAGES } from '@nestjs/core/constants';
 import { PrismaClient } from '@prisma/client';
-import { STATUS_CODES } from 'http';
+import { PostGameDto } from './dto/in/PostGame.dto';
 
 @Injectable()
 export class GameService {
-  constructor(private readonly prisma: PrismaClient) {}
-  async getGameCommand(gameId: string) {
-    const gameCommand = await this.prisma.game.findUnique({
-      select: {
-        game_command: true,
-      },
-      where: {
-        game_id: gameId,
-      },
-    });
-    if (gameCommand !== null) {
-      return {
-        MESSAGE: 'Get GameCommand Success!',
-        STATUS_CODES: 200,
-        gameCommand,
-      };
-    } else {
-      throw new NotFoundException();
-    }
-  }
+    constructor(private readonly prisma: PrismaClient) { }
+    async postGameInfo(postGameDto: PostGameDto) {
+        const gameInfo = await this.prisma.game.create({
+            data: {
+                game_name: postGameDto.gameName,
+                game_info: postGameDto.gameInfo,
+                game_command: postGameDto.gameCommand,
+                init_1p_command: postGameDto.init1pCommand,
+                init_2p_command: postGameDto.init2pCommand,
+            }
+        });
 
-  async getGameInfo(gameId: string) {
-    const gameInfo = await this.prisma.game.findUnique({
-      where: {
-        game_id: gameId,
-      },
-    });
-    if (gameInfo !== null) {
-      return {
-        MESSAGE: 'Get GameInfo Success!',
-        STATUS_CODES: 200,
-        gameInfo,
-      };
-    } else {
-      throw new NotFoundException();
+        return {
+            MESSAGE: 'Post GameInfo Success!',
+            STATUS_CODES: 201,
+            gameInfo,
+        }
     }
-  }
+    async getGameCommand(gameId: string) {
+        const gameCommand = await this.prisma.game.findUnique({
+            select: {
+                game_command: true,
+            },
+            where: {
+                game_id: gameId,
+            },
+        });
+        if (gameCommand !== null) {
+            return {
+                MESSAGE: 'Get GameCommand Success!',
+                STATUS_CODES: 200,
+                gameCommand,
+            };
+        } else {
+            throw new NotFoundException();
+        }
+    }
 
-  async getAllGameInformation() {
-    const allGameInfo = await this.prisma.game.findMany();
-    return {
-      MESSAGE: 'Get AllGameInfo Success!',
-      STATUS_CODES: 200,
-      allGameInfo,
-    };
-  }
+    async getGameInfo(gameId: string) {
+        const gameInfo = await this.prisma.game.findUnique({
+            where: {
+                game_id: gameId,
+            },
+        });
+        if (gameInfo !== null) {
+            return {
+                MESSAGE: 'Get GameInfo Success!',
+                STATUS_CODES: 200,
+                gameInfo,
+            };
+        } else {
+            throw new NotFoundException();
+        }
+    }
+
+    async getAllGameInformation() {
+        const allGameInfo = await this.prisma.game.findMany();
+        return {
+            MESSAGE: 'Get AllGameInfo Success!',
+            STATUS_CODES: 200,
+            allGameInfo,
+        };
+    }
 }
