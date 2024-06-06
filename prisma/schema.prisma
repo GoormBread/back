@@ -20,6 +20,7 @@ model Game {
   game_command Json
   init_1p_command String[]
   init_2p_command String[]
+  thumbnail_name String @default("")
 }
 
 model User {
