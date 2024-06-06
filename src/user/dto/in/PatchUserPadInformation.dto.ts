@@ -1,5 +1,7 @@
 import { Prisma } from "@prisma/client"
+import { IsObject } from "class-validator";
 
-export type PatchUserPadInformationDto = {
-    userGameCommand: Prisma.InputJsonObject;
+export class PatchUserPadInformationDto {
+    @IsObject()
+    userGameCommand: Prisma.InputJsonObject
 }
