@@ -5,7 +5,7 @@ import { Redis } from 'ioredis';
 import { LOBBY_REDIS } from 'src/redis/redis.constants';
 
 
-@WebSocketGateway({transports: ['websocket']})
+@WebSocketGateway({namespace: 'backend', transports: ['websocket']})
 export class LobbyGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   @Inject(LOBBY_REDIS) private readonly redisClient: Redis;
   private server: Server;
