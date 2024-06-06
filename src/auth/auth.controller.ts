@@ -7,6 +7,8 @@ import {
   Req,
   Res,
   Session,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { SaveUserDto } from './dto/in/SaveUser.dto';
 import { LoginDto } from './dto/in/Login.dto';
@@ -21,6 +23,13 @@ export class AuthController {
 
   //Pipe 사용
   @HttpCode(201)
+  @UsePipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      forbidUnknownValues: true,
+    }),
+  )
   @Post('/register')
   async registerUser(@Body() saveUserDto: SaveUserDto) {
     try {
@@ -32,6 +41,13 @@ export class AuthController {
 
   //Pipe 사용
   @Post('/login')
+  @UsePipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      forbidUnknownValues: true,
+    }),
+  )
   async login(@Body() loginDto: LoginDto, @Req() request: Request) {
     try {
       return await this.authService.login(loginDto, request);
