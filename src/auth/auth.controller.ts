@@ -16,7 +16,9 @@ import { AuthService } from './auth.service';
 
 import { throwErrorHttp } from 'src/error';
 import { Request, Response } from 'express';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -40,6 +42,7 @@ export class AuthController {
   }
 
   //Pipe 사용
+  @HttpCode(200)
   @Post('/login')
   @UsePipes(
     new ValidationPipe({
@@ -57,6 +60,7 @@ export class AuthController {
   }
 
   //Cookie의 Seesion ID 사용
+  @HttpCode(200)
   @Post('/logout')
   async logout(@Req() request: Request, @Res() response: Response) {
     try {

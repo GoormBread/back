@@ -2,7 +2,9 @@ import { Body, Controller, Delete, Get, HttpCode, Param, Post, UsePipes, Validat
 import { GameService } from './game.service';
 import { throwErrorHttp } from 'src/error';
 import { PostGameDto } from './dto/in/PostGame.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('game')
 @Controller('game')
 export class GameController {
   constructor(private readonly gameService: GameService) {}
