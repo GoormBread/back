@@ -6,6 +6,7 @@ import { LobbyModule } from './lobby/lobby.module';
 
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
+import { GameModule } from './game/game.module';
 
 @Global()
 @Module({
@@ -14,6 +15,7 @@ import { UserModule } from './user/user.module';
     RedisModule,
     LobbyModule,
     UserModule,
+    GameModule,
   ],
   controllers: [],
   providers: [PrismaClient,],
