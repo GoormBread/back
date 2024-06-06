@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>WebSocket Lobby Client</title>
+  <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+</head>
+<body>
+  <h1>WebSocket Lobby Client</h1>
+
+  <div>
+    <h2>Create Lobby</h2>
+    <input type="text" id="createLobbyId" placeholder="Lobby ID">
+    <input type="text" id="createLobbyName" placeholder="Lobby Name">
+    <input type="text" id="createLobbyDescription" placeholder="Lobby Description">
+    <input type="password" id="createLobbyPassword" placeholder="Password">
+    <button onclick="createLobby()">Create Lobby</button>
+  </div>
+
+  <div>
+    <h2>Join Lobby</h2>
+    <input type="text" id="joinLobbyId" placeholder="Lobby ID">
+    <input type="text" id="joinPlayerId" placeholder="Player ID">
+    <input type="password" id="joinLobbyPassword" placeholder="Password">
+    <button onclick="joinLobby()">Join Lobby</button>
+  </div>
+
+  <div>
+    <h2>Toggle Ready</h2>
+    <input type="text" id="toggleReadyLobbyId" placeholder="Lobby ID">
+    <input type="text" id="toggleReadyPlayerId" placeholder="Player ID">
+    <button onclick="toggleReady()">Toggle Ready</button>
+  </div>
+
+  <div>
+    <h2>Leave Lobby</h2>
+    <input type="text" id="leaveLobbyId" placeholder="Lobby ID">
+    <input type="text" id="leavePlayerId" placeholder="Player ID">
+    <button onclick="leaveLobby()">Leave Lobby</button>
+  </div>
+
+  <div>
+    <h2>Get All Lobbies</h2>
+    <button onclick="getAllLobbies()">Get All Lobbies</button>
+  </div>
+
+  <div id="output"></div>
+
+  <script>
+    const socket = io('ws://localhost:3000/backend', {transports: ['websocket']});
+
+    socket.on('redirect', (url) => {
+      output('Redirect to: ' + url);
+    });
+
+    socket.on('updateLobby', (lobby) => {
+      output('Lobby updated: ' + JSON.stringify(lobby));
+    });
+
+    socket.on('startGame', (route) => {
+      output('Start game: ' + route);
+    });
+
+    socket.on('allLobbies', (lobbies) => {
+      output('All lobbies: ' + JSON.stringify(lobbies));
+    });
+
+    socket.on('error', (message) => {
+      output('Error: ' + message);
+    });
+
+    function output(message) {
+      const div = document.getElementById('output');
+      div.innerHTML += '<p>' + message + '</p>';
+    }
+
+    function createLobby() {
+      const lobbyId = document.getElementById('createLobbyId').value;
+      const lobbyName = document.getElementById('createLobbyName').value;
+      const lobbyDescription = document.getElementById('createLobbyDescription').value;
+      const password = document.getElementById('createLobbyPassword').value;
+      socket.emit('createLobby', { lobbyId, lobbyName, lobbyDescription, password });
+    }
+
+    function joinLobby() {
+      const lobbyId = document.getElementById('joinLobbyId').value;
+      const playerId = document.getElementById('joinPlayerId').value;
+      const password = document.getElementById('joinLobbyPassword').value;
+      socket.emit('joinLobby', { lobbyId, playerId, password });
+    }
+
+    function toggleReady() {
+      const lobbyId = document.getElementById('toggleReadyLobbyId').value;
+      const playerId = document.getElementById('toggleReadyPlayerId').value;
+      socket.emit('toggleReady', { lobbyId, playerId });
+    }
+
+    function leaveLobby() {
+      const lobbyId = document.getElementById('leaveLobbyId').value;
+      const playerId = document.getElementById('leavePlayerId').value;
+      socket.emit('leaveLobby', { lobbyId, playerId });
+    }
+
+    function getAllLobbies() {
+      socket.emit('getAllLobby');
+    }
+  </script>
+</body>
+</html>
