@@ -11,7 +11,9 @@ import {
 import { UserService } from './user.service';
 import { PatchUserPadInformationDto } from './dto/in/PatchUserPadInformation.dto';
 import { throwErrorHttp } from 'src/error';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('user')
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
