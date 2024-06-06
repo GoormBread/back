@@ -5,6 +5,7 @@ import { RedisModule } from './redis/redis.module';
 import { LobbyModule } from './lobby/lobby.module';
 
 import { AuthModule } from './auth/auth.module';
+import { UserModule } from './user/user.module';
 
 @Global()
 @Module({
@@ -12,6 +13,7 @@ import { AuthModule } from './auth/auth.module';
     AuthModule,
     RedisModule,
     LobbyModule,
+    UserModule,
   ],
   controllers: [],
   providers: [PrismaClient,],

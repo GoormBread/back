@@ -4,7 +4,7 @@ export const DEFAULT_GAME_COMMAND = {
     LEFT: 'ArrowLeft',
     RIGHT: 'ArrowRight',
     A: 'a',
-    B: 'b',
+    B: 'b', 
     START: 'Enter',
     SELECT: 'Shift',
 }

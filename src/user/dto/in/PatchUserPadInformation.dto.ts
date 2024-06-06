@@ -1,4 +1,5 @@
+import { Prisma } from "@prisma/client"
+
 export type PatchUserPadInformationDto = {
-    userId: string;
-    serGameCommand: JSON;
+    userGameCommand: Prisma.InputJsonObject;
 }
