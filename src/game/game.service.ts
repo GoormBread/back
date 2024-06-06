@@ -7,6 +7,7 @@ import { STATUS_CODES } from 'http';
 @Injectable()
 export class GameService {
     constructor(private readonly prisma: PrismaClient) {}
+
     async removeGameInfo(gameId: string) {
         const gameInfo = await this.prisma.game.delete({
             where: {
@@ -26,6 +27,7 @@ export class GameService {
     }
     
     async postGameInfo(postGameDto: PostGameDto) {
+        console.log(postGameDto);
         const gameInfo = await this.prisma.game.create({
             data: {
                 game_name: postGameDto.gameName,
@@ -33,9 +35,10 @@ export class GameService {
                 game_command: postGameDto.gameCommand,
                 init_1p_command: postGameDto.init1pCommand,
                 init_2p_command: postGameDto.init2pCommand,
+                thumbnail_name: postGameDto.file.filename,
             }
         });
-
+        console.log(gameInfo);
         return {
             MESSAGE: 'Post GameInfo Success!',
             STATUS_CODES: 201,
@@ -55,7 +58,7 @@ export class GameService {
             return {
                 MESSAGE: 'Get GameCommand Success!',
                 STATUS_CODES: 200,
-                gameCommand,
+                gameCommand
             };
         } else {
             throw new NotFoundException();
@@ -86,5 +89,22 @@ export class GameService {
             STATUS_CODES: 200,
             allGameInfo,
         };
+    }
+
+    async getGameImage(gameId: string) {
+        const gameSrcId = await this.prisma.game.findUnique({
+            select: {
+                thumbnail_name: true,
+            },
+            where: {
+                game_id: gameId,
+            }
+        });
+        if(gameSrcId !== null){
+            return gameSrcId.thumbnail_name;
+        }
+        else{
+            throw new NotFoundException();
+        }
     }
 }
