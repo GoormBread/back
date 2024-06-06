@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, UsePipes, ValidationPipe } from '@nestjs/common';
 import { UserService } from './user.service';
 import { PatchUserPadInformationDto } from './dto/in/PatchUserPadInformation.dto';
 import { throwErrorHttp } from 'src/error';
@@ -17,6 +17,7 @@ export class UserController {
   }
 
 
+  @UsePipes(new ValidationPipe({whitelist: true, forbidNonWhitelisted: true, forbidUnknownValues: true}))
   @Patch('/:userId/pad')
   async patchUserPadInformation(@Param('userId') userId: string, @Body() patchUserPadInformationDto: PatchUserPadInformationDto) {
     try {

@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {  Injectable, NotFoundException } from '@nestjs/common';
 import { PatchUserPadInformationDto } from './dto/in/PatchUserPadInformation.dto';
 import { PrismaClient } from '@prisma/client';
 
@@ -14,7 +14,8 @@ export class UserService {
           user_id: userId
         }
       });
-      if(userCommand.user_game_command !== null){
+      console.log(userCommand);
+      if(userCommand !== null){
         return {
           MESSAGE: 'Get UserCommand Success!',
           STATUS_CODES: 200,
@@ -25,6 +26,7 @@ export class UserService {
         throw new NotFoundException();
       }
     }
+
     async modifyUserPersonalCommand(userId: string, patchUserPadInformationDto: PatchUserPadInformationDto) {
         const existedUserId = await this.prisma.user.findUnique({
           select:{
@@ -34,7 +36,7 @@ export class UserService {
             user_id: userId,
           },
         });
-        if(existedUserId.user_id === userId){
+        if(existedUserId !== null && existedUserId.user_id === userId){
           const user = await this.prisma.user.update({
             select:{
               nickname: true,
@@ -54,7 +56,12 @@ export class UserService {
           }
         }
         else{
-          throw new NotFoundException();
+          if(existedUserId === null){
+            throw new NotFoundException();
+          }
+          else{
+
+          }
         }
     }
 }
