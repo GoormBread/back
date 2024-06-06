@@ -5,6 +5,6 @@ import { LobbyGateway } from './lobby.gateway';
 
 @Module({
   controllers: [LobbyController],
-  providers: [LobbyService, LobbyGateway]
+  providers: [LobbyService, LobbyGateway],
 })
 export class LobbyModule {}

@@ -1,4 +1,10 @@
-import { Global, Inject, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import {
+  Global,
+  Inject,
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+} from '@nestjs/common';
 
 import { PrismaClient } from '@prisma/client';
 import { RedisModule } from './redis/redis.module';
@@ -10,17 +16,9 @@ import { GameModule } from './game/game.module';
 
 @Global()
 @Module({
-  imports: [
-    AuthModule,
-    RedisModule,
-    LobbyModule,
-    UserModule,
-    GameModule,
-  ],
+  imports: [AuthModule, RedisModule, LobbyModule, UserModule, GameModule],
   controllers: [],
-  providers: [PrismaClient,],
+  providers: [PrismaClient],
   exports: [PrismaClient],
 })
-export class AppModule{
-  
-}
+export class AppModule {}
