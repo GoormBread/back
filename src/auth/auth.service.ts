@@ -7,6 +7,8 @@ import {
   Res,
   Session,
   UnauthorizedException,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { LoginDto } from './dto/in/Login.dto';
 import { SaveUserDto } from './dto/in/SaveUser.dto';
