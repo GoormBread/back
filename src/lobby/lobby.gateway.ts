@@ -1,11 +1,11 @@
 import { WebSocketGateway, SubscribeMessage, OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect, MessageBody, ConnectedSocket } from '@nestjs/websockets';
-import { Socket, Server } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 import { Inject } from '@nestjs/common';
 import { Redis } from 'ioredis';
 import { LOBBY_REDIS } from 'src/redis/redis.constants';
 
 
-@WebSocketGateway({transports: ['websocket']})
+@WebSocketGateway({namespace: '/backend', transports: ['websocket']})
 export class LobbyGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   @Inject(LOBBY_REDIS) private readonly redisClient: Redis;
   private server: Server;
