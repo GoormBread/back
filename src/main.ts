@@ -20,6 +20,7 @@ async function bootstrap() {
                                       .setDescription("구름빵 API입니다.")
                                       .setVersion('1.0')
                                       .addTag('goormbread')
+                                      .addServer('http://paran2024.iptime.org/backend')
                                       .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
