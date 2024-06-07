@@ -1,12 +1,21 @@
-import { WebSocketGateway, SubscribeMessage, OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect, MessageBody, ConnectedSocket } from '@nestjs/websockets';
-import { Socket, Server } from 'socket.io';
+import {
+  WebSocketGateway,
+  SubscribeMessage,
+  OnGatewayInit,
+  OnGatewayConnection,
+  OnGatewayDisconnect,
+  MessageBody,
+  ConnectedSocket,
+} from '@nestjs/websockets';
+import { Server, Socket } from 'socket.io';
 import { Inject } from '@nestjs/common';
 import { Redis } from 'ioredis';
 import { LOBBY_REDIS } from 'src/redis/redis.constants';
 
-
-@WebSocketGateway({transports: ['websocket']})
-export class LobbyGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
+@WebSocketGateway({ namespace: 'backend', transports: ['websocket'] })
+export class LobbyGateway
+  implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
+{
   @Inject(LOBBY_REDIS) private readonly redisClient: Redis;
   private server: Server;
 
@@ -23,12 +32,19 @@ export class LobbyGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
   }
 
   @SubscribeMessage('joinRoom')
-  async handleJoinRoom(@MessageBody() room: string, @ConnectedSocket() client: Socket): Promise<void> {
+  async handleJoinRoom(
+    @MessageBody() room: string,
+    @ConnectedSocket() client: Socket,
+  ): Promise<void> {
     client.join(room);
     console.log(`${client.id} joined room: ${room}`);
 
     const userInfo = { userId: client.id, joinTime: Date.now() };
-    await this.redisClient.hset(`room:${room}`, client.id, JSON.stringify(userInfo));
+    await this.redisClient.hset(
+      `room:${room}`,
+      client.id,
+      JSON.stringify(userInfo),
+    );
 
     const roomInfo = await this.redisClient.hgetall(`room:${room}`);
     const parsedRoomInfo = {};
@@ -40,7 +56,10 @@ export class LobbyGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
   }
 
   @SubscribeMessage('leaveRoom')
-  async handleLeaveRoom(@MessageBody() room: string, @ConnectedSocket() client: Socket): Promise<void> {
+  async handleLeaveRoom(
+    @MessageBody() room: string,
+    @ConnectedSocket() client: Socket,
+  ): Promise<void> {
     client.leave(room);
     console.log(`${client.id} left room: ${room}`);
 
@@ -60,7 +79,10 @@ export class LobbyGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
   }
 
   @SubscribeMessage('message')
-  async handleMessage(@MessageBody() payload: { room: string, message: string }, @ConnectedSocket() client: Socket): Promise<void> {
+  async handleMessage(
+    @MessageBody() payload: { room: string; message: string },
+    @ConnectedSocket() client: Socket,
+  ): Promise<void> {
     this.server.to(payload.room).emit('message', payload.message);
   }
 }

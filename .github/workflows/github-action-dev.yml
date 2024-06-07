@@ -6,7 +6,9 @@ on:
             - develop
         types: [closed]
 
-
+concurrency:
+  group: web-helm-ci
+  cancel-in-progress: true
 
 jobs:
         
@@ -54,16 +56,6 @@ jobs:
             cd web-helm
             yq eval '.backend.image.tag = "${{ github.sha }}"' -i ./web-helm/values.yaml
         
-        - name: Setup Helm
-          uses: azure/setup-helm@v1
-          with:
-            version: 'v3.5.4'
-
-        - name: Package Web Helm chart
-          run: |
-            cd web-helm
-            helm package web-helm/
-            helm repo index .
 
         - name: Commit and Push changes
           env:

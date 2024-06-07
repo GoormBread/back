@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import {
   IsString,
   IsNotEmpty,
@@ -8,10 +9,20 @@ import {
 } from 'class-validator';
 
 export class SaveUserDto {
+  @ApiProperty({
+    description: 'userId',
+    example: 'sgh41232',
+  })
   @IsString()
   @IsNotEmpty({ message: 'User ID is required' })
+  @MinLength(4, { message: 'Id must be at least 8 characters long' })
+  @MaxLength(14, { message: 'Id must be less than 20 characters long' })
   userId: string;
 
+  @ApiProperty({
+    description: 'password',
+    example: 'sgh4123SGH!',
+  })
   @IsString()
   @IsNotEmpty({ message: 'Password is required' })
   @MinLength(8, { message: 'Password must be at least 8 characters long' })
@@ -22,10 +33,11 @@ export class SaveUserDto {
   })
   password: string;
 
+  @ApiProperty({
+    description: 'nickname',
+    example: 'test',
+  })
   @IsString()
   @IsNotEmpty({ message: 'Nickname is required' })
   nickname: string;
-
-  @IsJSON({ message: 'User game command must be a valid JSON' })
-  userGameCommand?: JSON;
 }

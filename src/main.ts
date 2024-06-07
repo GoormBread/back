@@ -1,12 +1,10 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { RedisModule } from './redis/redis.module';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { Redis } from 'ioredis';
-import RedisStore from 'connect-redis';
 import { setUpSession } from './redis/redis.session';
 import { LOBBY_REDIS } from './redis/redis.constants';
 import { RedisIoAdapter } from './redis/redis.adapter';
-
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -17,6 +15,16 @@ async function bootstrap() {
   app.useWebSocketAdapter(redisIoAdapter);
   app.enableCors();
   setUpSession(app);
+
+  const config = new DocumentBuilder().setTitle("goormbread api")
+                                      .setDescription("구름빵 API입니다.")
+                                      .setVersion('1.0')
+                                      .addTag('goormbread')
+                                      .addServer('http://paran2024.iptime.org/backend')
+                                      .addServer('http://localhost:3000')
+                                      .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, document);
 
   await app.listen(3000);
 }

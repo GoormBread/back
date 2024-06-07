@@ -1,5 +1,5 @@
 FROM node:21
-CMD ["npm", "run", "start:dev"]
+
 
 WORKDIR /app
 
@@ -7,7 +7,9 @@ COPY package.json ./
 COPY package-lock.json ./
 
 RUN npm install
-RUN npx prisma generate
+
 COPY . .
+
+CMD ["sh", "-c", "npx prisma migrate dev && npx prisma generate && npm run start:dev"]
 
 EXPOSE 3000

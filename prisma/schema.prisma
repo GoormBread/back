@@ -15,10 +15,12 @@ datasource db {
 
 model Game {
   game_id String @id @default(uuid())
-  player_num Int
   game_name String
   game_info String
   game_command Json
+  init_1p_command String[]
+  init_2p_command String[]
+  thumbnail_name String @default("")
 }
 
 model User {
