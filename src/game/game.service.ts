@@ -15,6 +15,7 @@ export class GameService {
             },
         });
         if(gameInfo !== null){
+            
             return {
                 MESSAGE: 'Delete GameInfo Success!',
                 STATUS_CODES: 200,
