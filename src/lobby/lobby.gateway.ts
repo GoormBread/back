@@ -3,6 +3,8 @@ import { Server, Socket } from 'socket.io';
 import { Inject } from '@nestjs/common';
 import { Redis } from 'ioredis';
 import { LOBBY_REDIS } from 'src/redis/redis.constants';
+import { exec } from 'child_process';
+import { v4 as uuidv4 } from 'uuid';
 
 type Lobby = {
   lobbyName: string;
@@ -147,10 +149,12 @@ export class LobbyGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
     lobby.players[data.playerId] = !lobby.players[data.playerId];
     await this.saveLobby(data.lobbyId, lobby);
 
-    const allReady = Object.values(lobby.players).every(ready => ready);
+    const allReady = (lobby.playerNum === 2 && Object.values(lobby.players).every(ready => ready));
     if (allReady) {
+      const uuid = uuidv4();
+      exec(`helm install game-helm-${uuid} --set uniquePath=${uuid}`)
       const playerRoutes = Object.keys(lobby.clients).map((clientId, index) => {
-        return { clientId, route: `/play-game/${data.lobbyId}/${index === 0 ? '1p' : '2p'}` };
+        return { clientId, route: `/play-game/${uuid}/${index === 0 ? '1p' : '2p'}` };
       });
 
       playerRoutes.forEach(({ clientId, route }) => {
@@ -191,50 +195,3 @@ export class LobbyGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
     }
   }
 }
-  // @SubscribeMessage('joinRoom')
-  // async handleJoinRoom(
-  //   @MessageBody() room: string,
-  //   @ConnectedSocket() client: Socket,
-  // ): Promise<void> {
-  //   client.join(room);
-  //   console.log(`${client.id} joined room: ${room}`);
-
-  //   const userInfo = { userId: client.id, joinTime: Date.now() };
-  //   await this.redisClient.hset(
-  //     `room:${room}`,
-  //     client.id,
-  //     JSON.stringify(userInfo),
-  //   );
-
-  //   const roomInfo = await this.redisClient.hgetall(`room:${room}`);
-  //   const parsedRoomInfo = {};
-  //   for (const [key, value] of Object.entries(roomInfo)) {
-  //     parsedRoomInfo[key] = JSON.parse(value);
-  //   }
-
-  //   this.server.to(room).emit('roomInfo', parsedRoomInfo);
-  // }
-
-  // @SubscribeMessage('leaveRoom')
-  // async handleLeaveRoom(
-  //   @MessageBody() room: string,
-  //   @ConnectedSocket() client: Socket,
-  // ): Promise<void> {
-  //   client.leave(room);
-  //   console.log(`${client.id} left room: ${room}`);
-
-  //   await this.redisClient.hdel(`room:${room}`, client.id);
-
-  //   const roomInfo = await this.redisClient.hgetall(`room:${room}`);
-  //   const parsedRoomInfo = {};
-  //   for (const [key, value] of Object.entries(roomInfo)) {
-  //     parsedRoomInfo[key] = JSON.parse(value);
-  //   }
-
-  //   if (Object.keys(roomInfo).length === 0) {
-  //     await this.redisClient.del(`room:${room}`);
-  //   } else {
-  //     this.server.to(room).emit('roomInfo', parsedRoomInfo);
-  //   }
-  // }
-// }
