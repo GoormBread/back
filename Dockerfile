@@ -7,6 +7,8 @@ COPY package.json ./
 COPY package-lock.json ./
 
 RUN npm install
+RUN apt-get update
+RUN apt-get install -y helm
 
 COPY . .
 
