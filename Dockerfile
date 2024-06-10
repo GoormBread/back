@@ -17,6 +17,10 @@ RUN curl -L ${HELM_BASE_URL}/${HELM_TAR_FILE} | tar -xzO linux-amd64/helm > /usr
     chmod +x /usr/local/bin/helm && \
     helm version
 
+
+RUN helm repo add game-helm https://goormbread.github.io/game-helm/
+RUN helm repo update
+
 COPY . .
 
 CMD ["sh", "-c", "npx prisma migrate dev && npx prisma generate && npm run start:dev"]
