@@ -69,6 +69,7 @@ export class LobbyGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
       lock: lobby.lock.toString(),
       clients: JSON.stringify(lobby.clients),
     });
+
   }
 
   private async acquireLock(lobbyId: string): Promise<boolean> {
@@ -136,7 +137,6 @@ export class LobbyGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
       lobby.clients[client.id] = data.playerId;
       await this.saveLobby(lobby);
 
-      client.emit('redirect', `/lobby/${data.lobbyId}`);
       this.server.to(data.lobbyId).emit('updateLobby', lobby);
     } finally {
       await this.releaseLock(data.lobbyId);
