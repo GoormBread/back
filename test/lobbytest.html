@@ -45,7 +45,7 @@
   <div id="output"></div>
 
   <script>
-    const socket = io('ws://localhost:3000/backend', {transports: ['websocket']});
+    const socket = io('ws://172.21.78.53:3000/backend', {transports: ['websocket']});
 
     socket.on('redirect', (url) => {
       output('Redirect to: ' + url);
