@@ -7,6 +7,7 @@ import { exec } from 'child_process';
 import { v4 as uuidv4 } from 'uuid';
 
 type Lobby = {
+  lobbyId: string;
   lobbyName: string;
   lobbyDescription: string;
   password: string;
@@ -46,6 +47,7 @@ export class LobbyGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
     const lobby = await this.redisClient.hgetall(`lobby:${lobbyId}`);
     if (Object.keys(lobby).length === 0) return null; 
     return {
+      lobbyId: lobby.lobbyId,
       lobbyName: lobby.lobbyName,
       lobbyDescription: lobby.lobbyDescription,
       password: lobby.password,
@@ -56,8 +58,9 @@ export class LobbyGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
     };
   }
 
-  private async saveLobby(lobbyId: string, lobby: Lobby) {
-    await this.redisClient.hmset(`lobby:${lobbyId}`, {
+  private async saveLobby(lobby: Lobby) {
+    await this.redisClient.hmset(`lobby:${lobby.lobbyId}`, {
+      lobbyId: lobby.lobbyId,
       lobbyName: lobby.lobbyName,
       lobbyDescription: lobby.lobbyDescription,
       password: lobby.password,
@@ -90,8 +93,9 @@ export class LobbyGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
   }
 
   @SubscribeMessage('createLobby')
-  async handleCreateLobby(@MessageBody() data: { lobbyId: string; lobbyName: string; lobbyDescription: string; password: string }, @ConnectedSocket() client: Socket) {
+  async handleCreateLobby(@MessageBody() data: { lobbyName: string; lobbyDescription: string; password: string }, @ConnectedSocket() client: Socket) {
     const lobby: Lobby = {
+      lobbyId: uuidv4(),
       lobbyName: data.lobbyName,
       lobbyDescription: data.lobbyDescription,
       password: data.password,
@@ -100,8 +104,8 @@ export class LobbyGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
       lock: false,
       clients: {},
     };
-    await this.saveLobby(data.lobbyId, lobby);
-    client.emit('redirect', `/lobby/${data.lobbyId}`);
+    await this.saveLobby(lobby);
+    client.emit('redirect', `/lobby/${lobby.lobbyId}`);
   }
 
   @SubscribeMessage('joinLobby')
@@ -130,7 +134,7 @@ export class LobbyGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
       lobby.players[data.playerId] = false;
       lobby.playerNum += 1;
       lobby.clients[client.id] = data.playerId;
-      await this.saveLobby(data.lobbyId, lobby);
+      await this.saveLobby(lobby);
 
       client.emit('redirect', `/lobby/${data.lobbyId}`);
       this.server.to(data.lobbyId).emit('updateLobby', lobby);
@@ -147,14 +151,13 @@ export class LobbyGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
       return;
     }
     lobby.players[data.playerId] = !lobby.players[data.playerId];
-    await this.saveLobby(data.lobbyId, lobby);
+    await this.saveLobby(lobby);
 
     const allReady = (lobby.playerNum === 2 && Object.values(lobby.players).every(ready => ready));
     if (allReady) {
-      const uuid = uuidv4();
-      exec(`helm install game-helm-${uuid} game-helm/game-helm --set uniquePath=${uuid} -n paran-2024`);
+      exec(`helm install game-helm-${lobby.lobbyId} game-helm/game-helm --set uniquePath=${lobby.lobbyId} -n paran-2024`);
       const playerRoutes = Object.keys(lobby.clients).map((clientId, index) => {
-        return { clientId, route: `/play-game/${uuid}/${index === 0 ? '1p' : '2p'}` };
+        return { clientId, route: `/play-game/${lobby.lobbyId}` };
       });
 
       playerRoutes.forEach(({ clientId, route }) => {
@@ -186,8 +189,9 @@ export class LobbyGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 
       if (lobby.playerNum === 0) {
         await this.redisClient.del(`lobby:${data.lobbyId}`);
+
       } else {
-        await this.saveLobby(data.lobbyId, lobby);
+        await this.saveLobby(lobby);
         this.server.to(data.lobbyId).emit('updateLobby', lobby);
       }
     } finally {
