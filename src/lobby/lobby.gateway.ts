@@ -137,7 +137,13 @@ export class LobbyGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
       lobby.clients[client.id] = data.playerId;
       await this.saveLobby(lobby);
 
-      this.server.to(data.lobbyId).emit('updateLobby', lobby);
+      const playerRoutes = Object.keys(lobby.clients).map((clientId, index) => {
+        return { clientId };
+      });
+
+      playerRoutes.forEach(({ clientId }) => {
+        this.server.to(clientId).emit('updateLobby', lobby);
+      });
     } finally {
       await this.releaseLock(data.lobbyId);
     }
@@ -164,7 +170,13 @@ export class LobbyGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
         this.server.to(clientId).emit('startGame', route);
       });
     } else {
-      this.server.to(data.lobbyId).emit('updateLobby', lobby);
+      const playerRoutes = Object.keys(lobby.clients).map((clientId, index) => {
+        return { clientId };
+      });
+
+      playerRoutes.forEach(({ clientId }) => {
+        this.server.to(clientId).emit('updateLobby', lobby);
+      });
     }
   }
 
@@ -192,7 +204,13 @@ export class LobbyGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 
       } else {
         await this.saveLobby(lobby);
-        this.server.to(data.lobbyId).emit('updateLobby', lobby);
+        const playerRoutes = Object.keys(lobby.clients).map((clientId, index) => {
+          return { clientId };
+        });
+  
+        playerRoutes.forEach(({ clientId }) => {
+          this.server.to(clientId).emit('updateLobby', lobby);
+        });
       }
     } finally {
       await this.releaseLock(data.lobbyId);
