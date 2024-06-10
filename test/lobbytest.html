@@ -46,7 +46,7 @@
   <div id="output"></div>
 
   <script>
-    const socket = io('ws://localhost:3000/backend', {transports: ['websocket']});
+    const socket = io('ws://paran2024.iptime.org/backend', {transports: ['websocket']});
 
     socket.on('redirect', (url) => {
       output('Redirect to: ' + url);

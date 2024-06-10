@@ -152,7 +152,7 @@ export class LobbyGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
     const allReady = (lobby.playerNum === 2 && Object.values(lobby.players).every(ready => ready));
     if (allReady) {
       const uuid = uuidv4();
-      exec(`helm install game-helm-${uuid} --set uniquePath=${uuid}`)
+      exec(`helm install game-helm-${uuid} game-helm/game-helm --set uniquePath=${uuid} -n paran-2024`);
       const playerRoutes = Object.keys(lobby.clients).map((clientId, index) => {
         return { clientId, route: `/play-game/${uuid}/${index === 0 ? '1p' : '2p'}` };
       });
